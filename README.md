@@ -5,12 +5,12 @@ A comprehensive full-stack web application that visualizes and solves various CP
 ## 🚀 Features
 
 - **Multiple CPU Scheduling Algorithms:**
-  - First Come First Serve (FCFS)
-  - Shortest Job First (SJF)
-  - Shortest Remaining Time First (SRTF)
-  - Round Robin (RR)
-  - Priority Non-Preemptive
-  - Priority Preemptive
+  - ✅ **First Come First Serve (FCFS)** - Non-preemptive, processes executed in arrival order
+  - ✅ **Shortest Job First (SJF)** - Non-preemptive, shortest burst time first
+  - ✅ **Shortest Remaining Time First (SRTF)** - Preemptive version of SJF
+  - ✅ **Round Robin (RR)** - Preemptive with configurable time quantum
+  - ✅ **Priority Non-Preemptive (PNP)** - Lower priority number = higher priority
+  - ✅ **Priority Preemptive (PP)** - Preemptive priority scheduling
 
 - **Interactive User Interface:**
   - Real-time input validation
@@ -120,6 +120,7 @@ The frontend application will start on `http://localhost:5173`
    - **Arrival Time:** Space-separated values (e.g., `0 2 4 6 8`)
    - **Burst Time:** Space-separated values (e.g., `3 6 4 5 2`)
    - **Priority Values:** Required only for Priority algorithms (lower value = higher priority)
+   - **Time Quantum:** Required only for Round Robin algorithm (default: 3)
 
 4. **Click "Solve"** to see the results
 
@@ -178,7 +179,12 @@ cpu-scheduler/
 
 - **POST** `/saveData` - Save process data to database
 - **GET** `/clear` - Clear all process data
-- **GET** `/fcfs` - Execute FCFS algorithm and return results
+- **GET** `/fcfs` - Execute First Come First Serve algorithm
+- **GET** `/sjf` - Execute Shortest Job First algorithm
+- **GET** `/srtf` - Execute Shortest Remaining Time First algorithm
+- **GET** `/rr?timeQuantum={value}` - Execute Round Robin (default quantum = 3)
+- **GET** `/priority-np` - Execute Priority Non-Preemptive algorithm
+- **GET** `/priority-p` - Execute Priority Preemptive algorithm
 
 **Example API Response:**
 ```json
@@ -237,30 +243,41 @@ spring.jpa.show-sql=true
 
 ## 📝 Algorithm Details
 
-### First Come First Serve (FCFS)
-- **Non-preemptive** scheduling algorithm
-- Processes are executed in the order they arrive
-- Simple but can cause convoy effect
+### First Come First Serve (FCFS) ✅
+- **Type:** Non-preemptive scheduling algorithm
+- **Logic:** Processes are executed in the order they arrive
+- **Pros:** Simple implementation, no starvation
+- **Cons:** Can cause convoy effect with long processes
 
-### Shortest Job First (SJF)
-- **Non-preemptive** algorithm
-- Selects process with smallest burst time
-- Optimal for average waiting time
+### Shortest Job First (SJF) ✅
+- **Type:** Non-preemptive algorithm
+- **Logic:** Selects process with smallest burst time among available processes
+- **Pros:** Optimal for average waiting time
+- **Cons:** Can cause starvation of longer processes
 
-### Shortest Remaining Time First (SRTF)
-- **Preemptive** version of SJF
-- Can switch to shorter process when it arrives
-- More complex but efficient
+### Shortest Remaining Time First (SRTF) ✅
+- **Type:** Preemptive version of SJF
+- **Logic:** Can switch to shorter process when it arrives during execution
+- **Pros:** Better response time than SJF
+- **Cons:** More complex, overhead of context switching
 
-### Round Robin (RR)
-- **Preemptive** algorithm with time quantum
-- Each process gets equal CPU time
-- Good for time-sharing systems
+### Round Robin (RR) ✅
+- **Type:** Preemptive algorithm with time quantum
+- **Logic:** Each process gets equal CPU time slices
+- **Pros:** Good for time-sharing systems, fair allocation
+- **Cons:** Performance depends on time quantum choice
 
-### Priority Scheduling
-- Processes executed based on priority
-- Available in both **preemptive** and **non-preemptive** versions
-- Can cause starvation of low-priority processes
+### Priority Non-Preemptive (PNP) ✅
+- **Type:** Non-preemptive priority-based scheduling
+- **Logic:** Highest priority process (lowest number) executes first
+- **Pros:** Important processes get preference
+- **Cons:** Can cause starvation of low-priority processes
+
+### Priority Preemptive (PP) ✅
+- **Type:** Preemptive priority-based scheduling
+- **Logic:** Higher priority process can interrupt current execution
+- **Pros:** Better response time for high-priority processes
+- **Cons:** High overhead, possible starvation
 
 ## 🐛 Troubleshooting
 

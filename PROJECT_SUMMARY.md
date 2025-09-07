@@ -80,12 +80,12 @@ git push -u origin main
 ## 🔧 Features Implemented
 
 ### Algorithms Supported
-- ✅ First Come First Serve (FCFS) - **Currently Implemented**
-- 🔄 Shortest Job First (SJF) - **UI Ready, Backend Pending**
-- 🔄 Shortest Remaining Time First (SRTF) - **UI Ready, Backend Pending**
-- 🔄 Round Robin (RR) - **UI Ready, Backend Pending**
-- 🔄 Priority Non-Preemptive - **UI Ready, Backend Pending**
-- 🔄 Priority Preemptive - **UI Ready, Backend Pending**
+- ✅ **First Come First Serve (FCFS)** - **Fully Implemented**
+- ✅ **Shortest Job First (SJF)** - **Fully Implemented**
+- ✅ **Shortest Remaining Time First (SRTF)** - **Fully Implemented**
+- ✅ **Round Robin (RR)** - **Fully Implemented with Time Quantum**
+- ✅ **Priority Non-Preemptive (PNP)** - **Fully Implemented**
+- ✅ **Priority Preemptive (PP)** - **Fully Implemented**
 
 ### Technical Stack
 - **Backend**: Spring Boot 3.2.0, Java 17, MySQL, JPA
