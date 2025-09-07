@@ -8,6 +8,31 @@ const InputFile = function({ setIsError, setMessage, setOutput }){
    const [arrivalTime, setArrivalTime] = useState("");
    const [burstTime, setBurstTime] = useState("");
    const [priorityValue, setPriorityValue] = useState("");
+   const [timeQuantum, setTimeQuantum] = useState("3");
+
+   function getAlgorithmEndpoint(algorithm) {
+      switch(algorithm) {
+         case "FCFS": return "fcfs";
+         case "SJFS": return "sjf";
+         case "SRTF": return "srtf";
+         case "RR": return "rr";
+         case "PNP": return "priority-np";
+         case "PP": return "priority-p";
+         default: return "fcfs";
+      }
+   }
+
+   function getAlgorithmDisplayName(algorithm) {
+      switch(algorithm) {
+         case "FCFS": return "First Come First Serve";
+         case "SJFS": return "Shortest Job First";
+         case "SRTF": return "Shortest Remaining Time First";
+         case "RR": return "Round Robin";
+         case "PNP": return "Priority Non-Preemptive";
+         case "PP": return "Priority Preemptive";
+         default: return "First Come First Serve";
+      }
+   }
 
    async function Submit() {
       
@@ -60,6 +85,11 @@ const InputFile = function({ setIsError, setMessage, setOutput }){
       }
 
       if(algorithm === "PNP" || algorithm === "PP") {
+         if(priorityValue.trim() === "") {
+            setMessage("Priority values are required for priority scheduling algorithms");
+            setIsError(true);
+            return;
+         }
          for(let i = 0; i < k; i = i + 1) {
             const value = parseInt(priorityValueArray[i]);
             if(value >= 0 && value <= Number.MAX_VALUE) {
@@ -84,6 +114,16 @@ const InputFile = function({ setIsError, setMessage, setOutput }){
          return;
       }
 
+      // Validate time quantum for Round Robin
+      if(algorithm === "RR") {
+         const quantum = parseInt(timeQuantum);
+         if(isNaN(quantum) || quantum <= 0) {
+            setMessage("Time quantum must be a positive integer");
+            setIsError(true);
+            return;
+         }
+      }
+
       await axios.get("http://localhost:8080/clear");
 
       const len = arrivalArray.length;
@@ -95,7 +135,12 @@ const InputFile = function({ setIsError, setMessage, setOutput }){
          })
       }
 
-      const response = await axios.get("http://localhost:8080/fcfs");
+      let apiUrl = `http://localhost:8080/${getAlgorithmEndpoint(algorithm)}`;
+      if (algorithm === "RR") {
+         apiUrl += `?timeQuantum=${timeQuantum}`;
+      }
+      
+      const response = await axios.get(apiUrl);
       const data = response.data;
       
       await setOutput({
@@ -105,7 +150,7 @@ const InputFile = function({ setIsError, setMessage, setOutput }){
          "turnaround_time" : data[3],
          "waiting_time" : data[4],
          "length" : len,
-         "algorithm" : "FCFS"
+         "algorithm" : getAlgorithmDisplayName(algorithm)
       })
 
    }
@@ -151,6 +196,17 @@ const InputFile = function({ setIsError, setMessage, setOutput }){
                      <input type="text" className="px-3 py-2 sm:py-3 rounded-lg outline-none  focus:ring-slate-500 
                      focus:ring-2" placeholder="Lower value higher priority" id="priority" value={priorityValue !== "" ? priorityValue : ""}
                      onChange={(e) => setPriorityValue(e.target.value)} />
+                  </div>
+               )
+            }
+
+            {
+               algorithm === "RR" && (
+                  <div className="flex flex-col justify-start gap-2">
+                     <label htmlFor="timeQuantum">Time Quantum</label>
+                     <input type="number" className="px-3 py-2 sm:py-3 rounded-lg outline-none  focus:ring-slate-500 
+                     focus:ring-2" placeholder="3" id="timeQuantum" value={timeQuantum}
+                     onChange={(e) => setTimeQuantum(e.target.value)} min="1" />
                   </div>
                )
             }
